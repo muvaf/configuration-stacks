@@ -73,6 +73,7 @@ func (o *KustomizeOperation) Run(cr resource.ParentResource) ([]resource.ChildRe
 		return nil, errors.Wrap(err, errPatch)
 	}
 	dir, err := o.prepareOverlay(cr, k)
+	defer os.RemoveAll(dir)
 	if err != nil {
 		return nil, errors.Wrap(err, errOverlayPreparation)
 	}
@@ -108,7 +109,6 @@ func (o *KustomizeOperation) prepareOverlay(cr resource.ParentResource, k *kusto
 		return "", err
 	}
 	tempDir := string(tempConfirmedDir)
-	defer os.RemoveAll(string(tempDir))
 
 	crYAML, err := yaml.Marshal(cr)
 	if err != nil {
