@@ -50,40 +50,40 @@ const (
 	errApply                 = "apply failed"
 )
 
-type ResurcePackReconcilerOption func(*ResurcePackReconciler)
+type ResourcePackReconcilerOption func(*ResourcePackReconciler)
 
-func AdditionalChildResourcePatcher(op ...resource.ChildResourcePatcher) ResurcePackReconcilerOption {
-	return func(reconciler *ResurcePackReconciler) {
+func AdditionalChildResourcePatcher(op ...resource.ChildResourcePatcher) ResourcePackReconcilerOption {
+	return func(reconciler *ResourcePackReconciler) {
 		reconciler.childResourcePatcher = append(reconciler.childResourcePatcher, op...)
 	}
 }
 
-func WithTemplatingEngine(eng resource.TemplatingEngine) ResurcePackReconcilerOption {
-	return func(reconciler *ResurcePackReconciler) {
+func WithTemplatingEngine(eng resource.TemplatingEngine) ResourcePackReconcilerOption {
+	return func(reconciler *ResourcePackReconciler) {
 		reconciler.templatingEngine = eng
 	}
 }
 
-func WithShortWait(d time.Duration) ResurcePackReconcilerOption {
-	return func(reconciler *ResurcePackReconciler) {
+func WithShortWait(d time.Duration) ResourcePackReconcilerOption {
+	return func(reconciler *ResourcePackReconciler) {
 		reconciler.shortWait = d
 	}
 }
 
-func WithLongWait(d time.Duration) ResurcePackReconcilerOption {
-	return func(reconciler *ResurcePackReconciler) {
+func WithLongWait(d time.Duration) ResourcePackReconcilerOption {
+	return func(reconciler *ResourcePackReconciler) {
 		reconciler.longWait = d
 	}
 }
 
-func NewResurcePackReconciler(m manager.Manager, of schema.GroupVersionKind, options ...ResurcePackReconcilerOption) *ResurcePackReconciler {
+func NewResourcePackReconciler(m manager.Manager, of schema.GroupVersionKind, options ...ResourcePackReconcilerOption) *ResourcePackReconciler {
 	nr := func() resource.ParentResource {
 		return runtimeresource.MustCreateObject(schema.GroupVersionKind(of), m.GetScheme()).(resource.ParentResource)
 	}
 	// Early panic if the resource doesn't satisfy ParentResource interface.
 	_ = nr()
 
-	r := &ResurcePackReconciler{
+	r := &ResourcePackReconciler{
 		kube:              m.GetClient(),
 		newParentResource: nr,
 		shortWait:         defaultShortWait,
@@ -101,7 +101,7 @@ func NewResurcePackReconciler(m manager.Manager, of schema.GroupVersionKind, opt
 	return r
 }
 
-type ResurcePackReconciler struct {
+type ResourcePackReconciler struct {
 	kube              client.Client
 	newParentResource func() resource.ParentResource
 	resourcePath      string
@@ -112,7 +112,7 @@ type ResurcePackReconciler struct {
 	childResourcePatcher resource.ChildResourcePatcherChain
 }
 
-func (r *ResurcePackReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *ResourcePackReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), reconcileTimeout)
 	defer cancel()
 
