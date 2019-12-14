@@ -88,10 +88,7 @@ func NewResurcePackReconciler(m manager.Manager, of schema.GroupVersionKind, opt
 		newParentResource: nr,
 		shortWait:         defaultShortWait,
 		longWait:          defaultLongWait,
-		templatingEngine: kustomize.NewKustomizeEngine(kustomize.AdditionalKustomizationPatcher(
-			kustomize.NewNamePrefixer(),
-			kustomize.NewLabelPropagator(),
-			kustomize.NewVarReferenceFiller())),
+		templatingEngine:  kustomize.NewKustomizeEngine(),
 		childResourcePatcher: resource.ChildResourcePatcherChain{
 			resource.NewDefaultingAnnotationRemover(),
 			resource.NewOwnerReferenceAdder(),

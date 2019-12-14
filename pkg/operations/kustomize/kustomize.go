@@ -68,6 +68,11 @@ func AdditionalKustomizationPatcher(op ...KustomizationPatcher) KustomizeOption 
 func NewKustomizeEngine(opt ...KustomizeOption) *KustomizeEngine {
 	ko := &KustomizeEngine{
 		ResourcePath: defaultRootPath,
+		Patcher: KustomizationPatcherChain{
+			NewNamePrefixer(),
+			NewLabelPropagator(),
+			NewVarReferenceFiller(),
+		},
 	}
 
 	for _, f := range opt {
